@@ -1,0 +1,40 @@
+version: '3.9'
+
+services:
+  postgres-db:
+    image: postgres
+    restart: always
+    container_name: mts-sm-postgres
+    environment:
+      POSTGRES_USER: mts-sm-local
+      POSTGRES_PASSWORD: mts-sm-local
+      POSTGRES_DB: mts-sm-local
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - mts_sm_network
+
+  minio:
+    container_name: "mts-sm-fs"
+    image: minio/minio
+    restart: always
+    ports:
+      - "9000:9000"
+    environment:
+      - MINIO_ACCESS_KEY=access_key
+      - MINIO_SECRET_KEY=secret_key
+      - MINIO_REGION=us-east-1
+    command: server /data
+    volumes:
+      - "~/.data/sam/minio/data:/data"
+    networks:
+      - mts_sm_network
+
+volumes:
+  postgres-data:
+
+networks:
+  mts_sm_network:
+    driver: bridge

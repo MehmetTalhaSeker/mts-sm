@@ -1,0 +1,10 @@
+### Update User
+PUT {{host}}/users
+Content-Type: multipart/form-data; boundary=boundary
+Authorization: Bearer {{token}}
+
+--boundary
+Content-Disposition: form-data; name="photo"; filename="img.png"
+
+< ./img.png
+
