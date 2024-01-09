@@ -1,0 +1,10 @@
+### Create Comment
+POST {{host}}/comments
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "text": "commentle",
+  "postId": 3,
+  "parentId": 4
+}

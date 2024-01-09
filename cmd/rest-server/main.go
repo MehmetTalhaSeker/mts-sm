@@ -22,7 +22,7 @@ func main() {
 	conf := config.Init()
 	logg.Init(conf)
 
-	mc, err := fs.Init(conf)
+	mc, err := fs.New(conf)
 	if err != nil {
 		logg.L.Fatal("Minio connection failed: $s", zap.Error(err))
 	}
@@ -34,6 +34,11 @@ func main() {
 
 	if err := db.AutoMigrate(
 		&model.User{},
+		&model.Post{},
+		&model.Comment{},
+		&model.PostLike{},
+		&model.CommentLike{},
+		&model.Friendship{},
 	); err != nil {
 		logg.L.Fatal("Gorm Migration Failed: $s", zap.Error(err))
 	}
@@ -56,17 +61,29 @@ func main() {
 	)
 
 	var (
-		ur = repository.NewUserRepository(db)
+		ur  = repository.NewUserRepository(db)
+		pr  = repository.NewPostRepository(db)
+		pcr = repository.NewCommentRepository(db)
+		lr  = repository.NewLikeRepository(db)
+		fr  = repository.NewFriendshipRepository(db)
 	)
 
 	var (
-		as = service.NewAuthService(ur)
-		us = service.NewUserService(ur, mc)
+		as  = service.NewAuthService(ur)
+		us  = service.NewUserService(ur, mc, conf)
+		ps  = service.NewPostService(pr, mc, conf)
+		pcs = service.NewCommentService(pcr, conf)
+		ls  = service.NewLikeService(lr, conf)
+		frs = service.NewFriendshipService(fr, conf)
 	)
 
 	v1 := app.Group("v1")
 	route.AuthRouter(v1, as)
 	route.UserRouter(v1, as, us)
+	route.PostRouter(v1, as, ps)
+	route.CommentRouter(v1, as, pcs)
+	route.LikeRouter(v1, as, ls)
+	route.FriendshipRouter(v1, as, frs)
 
 	logg.L.Fatal("Started", zap.Error(app.Listen(fmt.Sprintf(":%s", conf.Rest.Port))))
 }

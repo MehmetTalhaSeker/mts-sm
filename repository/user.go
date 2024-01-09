@@ -9,9 +9,10 @@ import (
 )
 
 type UserRepository interface {
-	Create(cat *model.User) error
+	Create(*model.User) error
 	ReadBy(field string, value string) (*model.User, error)
 	Read(id uint) (*model.User, error)
+	Update(*model.User) (*model.User, error)
 }
 
 type userRepository struct {
@@ -55,4 +56,12 @@ func (r *userRepository) ReadBy(field string, value string) (*model.User, error)
 	}
 
 	return &u, nil
+}
+
+func (r *userRepository) Update(us *model.User) (*model.User, error) {
+	if err := r.db.Save(&us).Error; err != nil {
+		return nil, err
+	}
+
+	return us, nil
 }

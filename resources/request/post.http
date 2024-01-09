@@ -1,0 +1,47 @@
+### Create Post
+POST {{host}}/posts
+Content-Type: multipart/form-data; boundary=boundary
+Authorization: Bearer {{token}}
+
+--boundary
+Content-Disposition: form-data; name="text"
+
+post text
+--boundary
+
+--boundary
+Content-Disposition: form-data; name="photo"; filename="img.png"
+
+< ./img.png
+
+### Read Post
+GET {{host}}/posts/2
+Content-Type: application/json
+
+### Update Post
+PUT {{host}}/posts
+Content-Type: multipart/form-data; boundary=boundary
+Authorization: Bearer {{token}}
+
+--boundary
+Content-Disposition: form-data; name="text"
+
+update text
+--boundary
+
+--boundary
+Content-Disposition: form-data; name="id"
+
+3
+--boundary
+
+--boundary
+Content-Disposition: form-data; name="photo"; filename="img.png"
+
+< ./img.png
+
+### Delete Post
+DELETE {{host}}/posts/5
+Content-Type: application/json
+Authorization: Bearer {{token}}
+

@@ -1,0 +1,17 @@
+### Create Post Like
+POST {{host}}/post-likes
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "postId": 4
+}
+
+### Create Comment Like
+POST {{host}}/comment-likes
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "commentId": 6
+}

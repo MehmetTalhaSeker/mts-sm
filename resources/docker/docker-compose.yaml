@@ -22,13 +22,15 @@ services:
     restart: always
     ports:
       - "9000:9000"
+      - "9001:9001"
     environment:
       - MINIO_ACCESS_KEY=access_key
       - MINIO_SECRET_KEY=secret_key
       - MINIO_REGION=us-east-1
-    command: server /data
     volumes:
-      - "~/.data/sam/minio/data:/data"
+      - "~/.data/mts-sm/minio/data:/data"
+    command: server /minio-image/storage --console-address :9001
+
     networks:
       - mts_sm_network
 
