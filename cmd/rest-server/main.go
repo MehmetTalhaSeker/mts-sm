@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/ansrivas/fiberprometheus/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -56,6 +57,10 @@ func main() {
 		TimeZone:   "Local",
 		Output:     os.Stderr,
 	}))
+
+	prometheus := fiberprometheus.New("mts-pro-service")
+	prometheus.RegisterAt(app, "/metrics")
+	app.Use(prometheus.Middleware)
 
 	logg.L.Info("Application:\n",
 		zap.String("environment", conf.Env),
