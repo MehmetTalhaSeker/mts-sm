@@ -3,12 +3,13 @@ package config
 import (
 	"bytes"
 	"fmt"
-	"github.com/MehmetTalhaSeker/mts-sm/assets"
 	"log"
 	"os"
 	"strings"
 
 	"github.com/spf13/viper"
+
+	"github.com/MehmetTalhaSeker/mts-sm/assets"
 )
 
 type Config struct {
@@ -17,7 +18,7 @@ type Config struct {
 		Port    string `yaml:"port"`
 		BaseURL string `yaml:"base_url"`
 		Version string `yaml:"version"`
-	} ` yaml:"rest"`
+	} `yaml:"rest"`
 	DB struct {
 		Driver   string
 		Host     string

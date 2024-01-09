@@ -2,20 +2,21 @@ package validatorutils
 
 import (
 	"fmt"
-	"github.com/MehmetTalhaSeker/mts-sm/internal/utils/errorutils"
 	"net/http"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
+
+	"github.com/MehmetTalhaSeker/mts-sm/internal/utils/errorutils"
 )
 
 var validate = validator.New()
 
 func Validate(payload interface{}) error {
 	err := validate.Struct(payload)
-
 	if err != nil {
 		var errors []string
+
 		for _, err := range err.(validator.ValidationErrors) {
 			message := ""
 
@@ -36,6 +37,7 @@ func Validate(payload interface{}) error {
 			} else {
 				message = fmt.Sprintf("%v doesn't satisfy the constraint", err.Field())
 			}
+
 			errors = append(
 				errors,
 				message,

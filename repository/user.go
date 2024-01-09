@@ -3,9 +3,11 @@ package repository
 import (
 	"errors"
 	"fmt"
-	"github.com/MehmetTalhaSeker/mts-sm/internal/model"
+
 	"github.com/jackc/pgx/v5/pgconn"
 	"gorm.io/gorm"
+
+	"github.com/MehmetTalhaSeker/mts-sm/internal/model"
 )
 
 type UserRepository interface {

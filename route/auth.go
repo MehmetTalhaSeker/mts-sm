@@ -1,11 +1,13 @@
 package route
 
 import (
+	"net/http"
+
+	"github.com/gofiber/fiber/v2"
+
 	"github.com/MehmetTalhaSeker/mts-sm/internal/dto"
 	utils "github.com/MehmetTalhaSeker/mts-sm/internal/utils/fiberutils"
 	"github.com/MehmetTalhaSeker/mts-sm/service"
-	"github.com/gofiber/fiber/v2"
-	"net/http"
 )
 
 func AuthRouter(app fiber.Router, service service.AuthService) {
@@ -15,7 +17,8 @@ func AuthRouter(app fiber.Router, service service.AuthService) {
 
 func register(service service.AuthService) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		requestBody := new(dto.RegisterDTO)
+		requestBody := new(dto.RegisterRequest)
+
 		err := utils.ParseBodyAndValidate(c, requestBody)
 		if err != nil {
 			return err
@@ -32,7 +35,8 @@ func register(service service.AuthService) fiber.Handler {
 
 func login(service service.AuthService) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		requestBody := new(dto.LoginDTO)
+		requestBody := new(dto.LoginRequest)
+
 		err := utils.ParseBodyAndValidate(c, requestBody)
 		if err != nil {
 			return err
@@ -42,6 +46,7 @@ func login(service service.AuthService) fiber.Handler {
 		if err != nil {
 			return err
 		}
+
 		return c.Status(http.StatusOK).JSON(&authResponse)
 	}
 }

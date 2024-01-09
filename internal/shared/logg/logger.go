@@ -1,9 +1,11 @@
 package logg
 
 import (
-	"github.com/MehmetTalhaSeker/mts-sm/internal/shared/config"
-	"go.uber.org/zap"
 	"log"
+
+	"go.uber.org/zap"
+
+	"github.com/MehmetTalhaSeker/mts-sm/internal/shared/config"
 )
 
 var L *zap.Logger
@@ -24,5 +26,4 @@ func Init(conf *config.Config) {
 	}
 
 	L.Info("Log initialize")
-
 }

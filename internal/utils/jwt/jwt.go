@@ -15,7 +15,6 @@ type TokenPayload struct {
 
 func Generate(payload *TokenPayload) string {
 	v, err := time.ParseDuration("10h") // TODO
-
 	if err != nil {
 		panic("Invalid time duration. Should be time.ParseDuration string")
 	}
@@ -46,7 +45,6 @@ func parse(token string) (*jwt.Token, error) {
 
 func Verify(token string) (*TokenPayload, error) {
 	parsed, err := parse(token)
-
 	if err != nil {
 		return nil, err
 	}

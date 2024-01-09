@@ -1,8 +1,9 @@
 package model
 
 import (
-	"github.com/MehmetTalhaSeker/mts-sm/internal/types"
 	"time"
+
+	"github.com/MehmetTalhaSeker/mts-sm/internal/types"
 )
 
 type Friendship struct {

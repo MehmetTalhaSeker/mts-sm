@@ -2,14 +2,16 @@ package service
 
 import (
 	"fmt"
+	"strconv"
+
+	"github.com/gofiber/fiber/v2"
+
 	"github.com/MehmetTalhaSeker/mts-sm/internal/dto"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/model"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/shared/config"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/types"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/utils/errorutils"
 	"github.com/MehmetTalhaSeker/mts-sm/repository"
-	"github.com/gofiber/fiber/v2"
-	"strconv"
 )
 
 type FriendshipService interface {

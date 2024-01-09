@@ -1,8 +1,9 @@
 package repository
 
 import (
-	"github.com/MehmetTalhaSeker/mts-sm/internal/model"
 	"gorm.io/gorm"
+
+	"github.com/MehmetTalhaSeker/mts-sm/internal/model"
 )
 
 type CommentRepository interface {

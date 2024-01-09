@@ -2,11 +2,13 @@ package database
 
 import (
 	"fmt"
-	"github.com/MehmetTalhaSeker/mts-sm/internal/shared/config"
+	"time"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"time"
+
+	"github.com/MehmetTalhaSeker/mts-sm/internal/shared/config"
 )
 
 func Init(conf *config.Config) (*gorm.DB, error) {

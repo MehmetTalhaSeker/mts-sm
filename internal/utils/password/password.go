@@ -4,7 +4,6 @@ import "golang.org/x/crypto/bcrypt"
 
 func Generate(raw string) string {
 	hash, err := bcrypt.GenerateFromPassword([]byte(raw), 10)
-
 	if err != nil {
 		panic(err)
 	}

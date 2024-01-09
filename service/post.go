@@ -1,21 +1,23 @@
 package service
 
 import (
+	"path/filepath"
+	"time"
+
+	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm/utils"
+
 	"github.com/MehmetTalhaSeker/mts-sm/internal/dto"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/fs"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/model"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/shared/config"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/utils/errorutils"
 	"github.com/MehmetTalhaSeker/mts-sm/repository"
-	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm/utils"
-	"path/filepath"
-	"time"
 )
 
 type PostService interface {
 	Create(*dto.PostCreateRequest) error
-	Read(ID uint) (*model.Post, error)
+	Read(ID uint) (*dto.PostResponse, error)
 	Update(*dto.PostUpdateRequest) error
 	Delete(*dto.DeleteRequest) error
 }
@@ -45,6 +47,7 @@ func (s *postService) Create(ud *dto.PostCreateRequest) error {
 
 		open, err := ud.Photo.Open()
 		imageUrl, err = s.fs.UploadImage("postPictures", fileExtension, open, ud.Photo.Size)
+
 		if err != nil {
 			return errorutils.ErrFailedSave
 		}
@@ -64,13 +67,13 @@ func (s *postService) Create(ud *dto.PostCreateRequest) error {
 	return nil
 }
 
-func (s *postService) Read(ID uint) (*model.Post, error) {
+func (s *postService) Read(ID uint) (*dto.PostResponse, error) {
 	u, err := s.repository.Read(ID)
 	if err != nil {
 		return nil, err
 	}
 
-	return u, nil
+	return u.ToPublicDTO(), nil
 }
 
 func (s *postService) Update(ud *dto.PostUpdateRequest) error {
@@ -97,6 +100,7 @@ func (s *postService) Update(ud *dto.PostUpdateRequest) error {
 
 		open, err := ud.Photo.Open()
 		imageUrl, err = s.fs.UploadImage("postPictures", fileExtension, open, ud.Photo.Size)
+
 		if err != nil {
 			return errorutils.ErrFailedSave
 		}

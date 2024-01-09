@@ -10,12 +10,12 @@ type FriendshipCreateRequest struct {
 }
 
 type FriendshipUpdateRequest struct {
-	ID     string                 `json:"id" validate:"required"`
-	Status types.FriendshipStatus `json:"status" validate:"required"`
+	ID     string                 `json:"id"           validate:"required"`
+	Status types.FriendshipStatus `json:"status"       validate:"required"`
 	UserID uint                   `validate:"required"`
 }
 
 type FriendshipDeleteRequest struct {
-	ID     string `json:"id'" validate:"required"`
+	ID     string `json:"id'"          validate:"required"`
 	UserID uint   `validate:"required"`
 }

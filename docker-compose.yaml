@@ -30,9 +30,24 @@ services:
     volumes:
       - "~/.data/mts-sm/minio/data:/data"
     command: server /minio-image/storage --console-address :9001
-
     networks:
       - mts_sm_network
+
+  rest-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rest-server
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    depends_on:
+      - minio
+      - postgres-db
+    networks:
+      - mts_sm_network
+    environment:
+      - ENV=local-dockerized
 
 volumes:
   postgres-data:

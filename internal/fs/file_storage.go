@@ -3,12 +3,14 @@ package fs
 import (
 	"context"
 	"fmt"
-	"github.com/MehmetTalhaSeker/mts-sm/internal/shared/config"
-	"github.com/MehmetTalhaSeker/mts-sm/internal/shared/logg"
+	"io"
+
 	"github.com/google/uuid"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
-	"io"
+
+	"github.com/MehmetTalhaSeker/mts-sm/internal/shared/config"
+	"github.com/MehmetTalhaSeker/mts-sm/internal/shared/logg"
 )
 
 type IFileStorage interface {
@@ -29,6 +31,7 @@ func New(conf *config.Config) (IFileStorage, error) {
 	})
 
 	ctx := context.Background()
+
 	exists, err := FS.BucketExists(ctx, conf.Minio.BucketName)
 	if err != nil {
 		return nil, err
@@ -50,16 +53,18 @@ func (m *minioFS) UploadImage(folderName, fileExt string, file io.Reader, size i
 	ctx := context.Background()
 
 	createdName := prepareName(folderName, fileExt)
-	object, err := m.client.PutObject(ctx, m.bucketName, createdName, file, size, minio.PutObjectOptions{})
 
+	object, err := m.client.PutObject(ctx, m.bucketName, createdName, file, size, minio.PutObjectOptions{})
 	if err != nil {
 		return nil, err
 	}
+
 	return &object.Key, nil
 }
 
 func prepareName(folderName, fileExt string) string {
 	imageName := uuid.New().String() + fileExt
 	prefix := fmt.Sprintf("%s/%s", folderName, imageName)
+
 	return prefix
 }

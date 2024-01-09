@@ -1,14 +1,16 @@
 package service
 
 import (
+	"path/filepath"
+	"time"
+
+	"gorm.io/gorm/utils"
+
 	"github.com/MehmetTalhaSeker/mts-sm/internal/dto"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/fs"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/shared/config"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/utils/errorutils"
 	"github.com/MehmetTalhaSeker/mts-sm/repository"
-	"gorm.io/gorm/utils"
-	"path/filepath"
-	"time"
 )
 
 type UserService interface {
@@ -41,6 +43,10 @@ func (s *userService) Update(ud *dto.UserUpdateRequest) error {
 	}
 
 	open, err := ud.Photo.Open()
+	if err != nil {
+		return errorutils.ErrFailedSave
+	}
+
 	imageUrl, err := s.fs.UploadImage("profilePictures", fileExtension, open, ud.Photo.Size)
 	if err != nil {
 		return errorutils.ErrFailedSave
@@ -58,6 +64,5 @@ func (s *userService) Update(ud *dto.UserUpdateRequest) error {
 }
 
 func (s *userService) AddFriend() error {
-
 	return nil
 }

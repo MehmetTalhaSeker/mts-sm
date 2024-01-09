@@ -1,14 +1,16 @@
 package route
 
 import (
+	"net/http"
+	"strconv"
+
+	"github.com/gofiber/fiber/v2"
+
 	"github.com/MehmetTalhaSeker/mts-sm/internal/dto"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/utils/errorutils"
 	utils "github.com/MehmetTalhaSeker/mts-sm/internal/utils/fiberutils"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/utils/middleware"
 	"github.com/MehmetTalhaSeker/mts-sm/service"
-	"github.com/gofiber/fiber/v2"
-	"net/http"
-	"strconv"
 )
 
 func PostRouter(app fiber.Router, as service.AuthService, service service.PostService) {
@@ -28,18 +30,14 @@ func createPost(service service.PostService) fiber.Handler {
 		}
 
 		text := c.FormValue("text")
-		sid, ok := c.Locals("UserID").(string)
 
-		if !ok {
-			return errorutils.ErrInvalidRequest
-		}
-
-		i, err := strconv.Atoi(sid)
+		uid, err := utils.ExtractUserID(c)
 		if err != nil {
-			return errorutils.ErrInvalidRequest
+			return err
 		}
 
-		rb.UserID = uint(i)
+		rb.UserID = uid
+
 		rb.Photo = file
 		rb.Text = text
 
@@ -58,6 +56,7 @@ func createPost(service service.PostService) fiber.Handler {
 func readPost(service service.PostService) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		id := c.Params("id")
+
 		ID, err := strconv.Atoi(id)
 		if err != nil {
 			return errorutils.ErrInvalidRequest
@@ -83,22 +82,19 @@ func updatePost(service service.PostService) fiber.Handler {
 
 		text := c.FormValue("text")
 		id := c.FormValue("id")
-		sid, ok := c.Locals("UserID").(string)
 
-		if !ok {
-			return errorutils.ErrInvalidRequest
-		}
-
-		userID, err := strconv.Atoi(sid)
+		uid, err := utils.ExtractUserID(c)
 		if err != nil {
-			return errorutils.ErrInvalidRequest
+			return err
 		}
-		rb.UserID = uint(userID)
+
+		rb.UserID = uid
 
 		ID, err := strconv.Atoi(id)
 		if err != nil {
 			return errorutils.ErrInvalidRequest
 		}
+
 		rb.ID = uint(ID)
 
 		rb.Photo = file
@@ -120,22 +116,20 @@ func deletePost(service service.PostService) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		rb := new(dto.DeleteRequest)
 
-		sid, ok := c.Locals("UserID").(string)
-		if !ok {
-			return errorutils.ErrInvalidRequest
+		uid, err := utils.ExtractUserID(c)
+		if err != nil {
+			return err
 		}
 
-		userID, err := strconv.Atoi(sid)
-		if err != nil {
-			return errorutils.ErrInvalidRequest
-		}
-		rb.UserID = uint(userID)
+		rb.UserID = uid
 
 		id := c.Params("id")
+
 		ID, err := strconv.Atoi(id)
 		if err != nil {
 			return errorutils.ErrInvalidRequest
 		}
+
 		rb.ID = uint(ID)
 
 		if err = utils.Validate(c, rb); err != nil {

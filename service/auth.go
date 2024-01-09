@@ -1,19 +1,21 @@
 package service
 
 import (
+	"strconv"
+
+	"github.com/gofiber/fiber/v2"
+
 	"github.com/MehmetTalhaSeker/mts-sm/internal/dto"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/model"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/utils/errorutils"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/utils/jwt"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/utils/password"
 	"github.com/MehmetTalhaSeker/mts-sm/repository"
-	"github.com/gofiber/fiber/v2"
-	"strconv"
 )
 
 type AuthService interface {
-	Register(register *dto.RegisterDTO) error
-	Login(login *dto.LoginDTO) (*dto.AuthResponse, error)
+	Register(register *dto.RegisterRequest) error
+	Login(login *dto.LoginRequest) (*dto.AuthResponse, error)
 	ReadUser(username string) (*model.User, error)
 }
 
@@ -27,7 +29,7 @@ func NewAuthService(repository repository.UserRepository) AuthService {
 	}
 }
 
-func (s *authService) Register(rd *dto.RegisterDTO) error {
+func (s *authService) Register(rd *dto.RegisterRequest) error {
 	um := &model.User{
 		Username: rd.Username,
 		Password: password.Generate(rd.Password),
@@ -41,7 +43,7 @@ func (s *authService) Register(rd *dto.RegisterDTO) error {
 	return nil
 }
 
-func (s *authService) Login(login *dto.LoginDTO) (*dto.AuthResponse, error) {
+func (s *authService) Login(login *dto.LoginRequest) (*dto.AuthResponse, error) {
 	u, err := s.repository.ReadBy("username", login.Username)
 	if err != nil {
 		return nil, errorutils.NewError(fiber.StatusBadRequest, err.Error())
@@ -66,5 +68,6 @@ func (s *authService) ReadUser(username string) (*model.User, error) {
 	if err != nil {
 		return nil, errorutils.NewError(fiber.StatusBadRequest, err.Error())
 	}
+
 	return u, nil
 }

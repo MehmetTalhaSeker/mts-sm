@@ -2,6 +2,13 @@ package main
 
 import (
 	"fmt"
+	"os"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"go.uber.org/zap"
+
 	"github.com/MehmetTalhaSeker/mts-sm/internal/database"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/fs"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/model"
@@ -11,11 +18,6 @@ import (
 	"github.com/MehmetTalhaSeker/mts-sm/repository"
 	"github.com/MehmetTalhaSeker/mts-sm/route"
 	"github.com/MehmetTalhaSeker/mts-sm/service"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/fiber/v2/middleware/logger"
-	"go.uber.org/zap"
-	"os"
 )
 
 func main() {

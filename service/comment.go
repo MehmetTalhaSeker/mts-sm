@@ -1,12 +1,13 @@
 package service
 
 import (
+	"github.com/gofiber/fiber/v2"
+
 	"github.com/MehmetTalhaSeker/mts-sm/internal/dto"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/model"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/shared/config"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/utils/errorutils"
 	"github.com/MehmetTalhaSeker/mts-sm/repository"
-	"github.com/gofiber/fiber/v2"
 )
 
 type CommentService interface {

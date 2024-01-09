@@ -1,14 +1,14 @@
 package route
 
 import (
+	"net/http"
+
+	"github.com/gofiber/fiber/v2"
+
 	"github.com/MehmetTalhaSeker/mts-sm/internal/dto"
-	"github.com/MehmetTalhaSeker/mts-sm/internal/utils/errorutils"
 	utils "github.com/MehmetTalhaSeker/mts-sm/internal/utils/fiberutils"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/utils/middleware"
 	"github.com/MehmetTalhaSeker/mts-sm/service"
-	"github.com/gofiber/fiber/v2"
-	"net/http"
-	"strconv"
 )
 
 func UserRouter(app fiber.Router, as service.AuthService, service service.UserService) {
@@ -24,18 +24,13 @@ func updateUser(service service.UserService) fiber.Handler {
 			return err
 		}
 
-		sid, ok := c.Locals("UserID").(string)
-
-		if !ok {
-			return errorutils.ErrInvalidRequest
-		}
-
-		i, err := strconv.Atoi(sid)
+		uid, err := utils.ExtractUserID(c)
 		if err != nil {
-			return errorutils.ErrInvalidRequest
+			return err
 		}
 
-		rb.ID = uint(i)
+		rb.ID = uid
+
 		rb.Photo = file
 
 		if err = utils.Validate(c, &rb); err != nil {

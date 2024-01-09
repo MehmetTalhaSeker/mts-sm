@@ -15,7 +15,7 @@ Content-Disposition: form-data; name="photo"; filename="img.png"
 < ./img.png
 
 ### Read Post
-GET {{host}}/posts/2
+GET {{host}}/posts/1
 Content-Type: application/json
 
 ### Update Post
