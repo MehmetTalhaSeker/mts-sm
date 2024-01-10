@@ -1,23 +1,30 @@
 package route
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/patrickmn/go-cache"
 
 	"github.com/MehmetTalhaSeker/mts-sm/internal/dto"
+	"github.com/MehmetTalhaSeker/mts-sm/internal/utils/apputils"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/utils/errorutils"
 	utils "github.com/MehmetTalhaSeker/mts-sm/internal/utils/fiberutils"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/utils/middleware"
 	"github.com/MehmetTalhaSeker/mts-sm/service"
 )
 
-func PostRouter(app fiber.Router, as service.AuthService, service service.PostService) {
+func PostRouter(app fiber.Router, as service.AuthService, service service.PostService, cac *cache.Cache) {
 	app.Post("/posts", middleware.AuthMiddleware(as), createPost(service))
 	app.Get("/posts/:id", readPost(service))
+	app.Get("/posts", readsPost(service))
 	app.Put("/posts", middleware.AuthMiddleware(as), updatePost(service))
 	app.Delete("/posts/:id", middleware.AuthMiddleware(as), deletePost(service))
+
+	app.Post("/posts/shorten/:id", createShortUrl(cac))
 }
 
 func createPost(service service.PostService) fiber.Handler {
@@ -63,6 +70,17 @@ func readPost(service service.PostService) fiber.Handler {
 		}
 
 		u, err := service.Read(uint(ID))
+		if err != nil {
+			return err
+		}
+
+		return c.Status(http.StatusOK).JSON(u)
+	}
+}
+
+func readsPost(service service.PostService) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		u, err := service.Reads()
 		if err != nil {
 			return err
 		}
@@ -141,5 +159,23 @@ func deletePost(service service.PostService) fiber.Handler {
 		}
 
 		return c.Status(http.StatusOK).JSON("OK")
+	}
+}
+
+func createShortUrl(cac *cache.Cache) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		id := c.Params("id")
+		if id == "" {
+			return errorutils.ErrInvalidRequest
+		}
+
+		ou := fmt.Sprintf("http://localhost:8080/v1/posts/%s", id)
+		suk := apputils.GenerateShortKey()
+
+		cac.Set(suk, ou, time.Minute*60)
+
+		su := fmt.Sprintf("http://localhost:8080/short/%s", suk)
+
+		return c.Status(http.StatusOK).JSON(su)
 	}
 }

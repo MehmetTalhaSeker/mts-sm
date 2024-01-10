@@ -23,7 +23,11 @@ func AuthMiddleware(service service.AuthService) fiber.Handler {
 			return errorutils.ErrUnauthorized
 		}
 
-		tokenPayload, err := jwt.Verify(chunks[1])
+		if err := service.CheckTokenValidity(chunks[1]); err != nil {
+			return errorutils.ErrUnauthorized
+		}
+
+		tokenPayload, err := jwt.Verify(chunks[1], service.GetJWTKey())
 		if err != nil {
 			return errorutils.ErrUnauthorized
 		}

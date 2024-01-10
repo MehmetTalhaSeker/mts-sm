@@ -45,3 +45,10 @@ DELETE {{host}}/posts/5
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
+### Shorten url by Post ID
+POST {{host}}/posts/shorten/5
+Content-Type: application/json
+
+### Get by shortened url
+GET localhost:8080/short/xO4nE8
+Content-Type: application/json

@@ -18,6 +18,7 @@ import (
 type PostService interface {
 	Create(*dto.PostCreateRequest) error
 	Read(ID uint) (*dto.PostResponse, error)
+	Reads() ([]*dto.PostResponse, error)
 	Update(*dto.PostUpdateRequest) error
 	Delete(*dto.DeleteRequest) error
 }
@@ -74,6 +75,20 @@ func (s *postService) Read(ID uint) (*dto.PostResponse, error) {
 	}
 
 	return u.ToPublicDTO(), nil
+}
+
+func (s *postService) Reads() ([]*dto.PostResponse, error) {
+	u, err := s.repository.Reads()
+	if err != nil {
+		return nil, err
+	}
+
+	var posts []*dto.PostResponse
+	for _, post := range u {
+		posts = append(posts, post.ToPublicDTO())
+	}
+
+	return posts, nil
 }
 
 func (s *postService) Update(ud *dto.PostUpdateRequest) error {

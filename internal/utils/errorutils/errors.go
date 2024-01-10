@@ -42,4 +42,5 @@ var (
 	ErrInvalidRequest          = NewError(http.StatusBadRequest, "Invalid request.")
 	ErrNotSupportedImage       = NewError(http.StatusBadRequest, "This extension is not supported.")
 	ErrFailedSave              = NewError(http.StatusServiceUnavailable, "We couldn't save your request. Please try again!")
+	ErrRecordNotFound          = NewError(http.StatusNotFound, "Record not found")
 )

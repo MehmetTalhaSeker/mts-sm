@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/patrickmn/go-cache"
 	"go.uber.org/zap"
 
 	"github.com/MehmetTalhaSeker/mts-sm/internal/database"
@@ -16,6 +17,7 @@ import (
 	"github.com/MehmetTalhaSeker/mts-sm/internal/shared/config"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/shared/logg"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/utils/errorutils"
+	utils "github.com/MehmetTalhaSeker/mts-sm/internal/utils/fiberutils"
 	"github.com/MehmetTalhaSeker/mts-sm/repository"
 	"github.com/MehmetTalhaSeker/mts-sm/route"
 	"github.com/MehmetTalhaSeker/mts-sm/service"
@@ -60,12 +62,15 @@ func main() {
 
 	prometheus := fiberprometheus.New("mts-pro-service")
 	prometheus.RegisterAt(app, "/metrics")
+
 	app.Use(prometheus.Middleware)
 
 	logg.L.Info("Application:\n",
 		zap.String("environment", conf.Env),
 		zap.String("port", conf.Rest.Port),
 	)
+
+	cac := cache.New(cache.NoExpiration, cache.NoExpiration)
 
 	var (
 		ur  = repository.NewUserRepository(db)
@@ -76,7 +81,7 @@ func main() {
 	)
 
 	var (
-		as  = service.NewAuthService(ur)
+		as  = service.NewAuthService(ur, conf, cac)
 		us  = service.NewUserService(ur, mc, conf)
 		ps  = service.NewPostService(pr, mc, conf)
 		pcs = service.NewCommentService(pcr, conf)
@@ -84,10 +89,14 @@ func main() {
 		frs = service.NewFriendshipService(fr, conf)
 	)
 
+	// ROUTES
+	app.Get("/short/:key", utils.ShortenerRedirect(cac))
+
 	v1 := app.Group("v1")
+
 	route.AuthRouter(v1, as)
 	route.UserRouter(v1, as, us)
-	route.PostRouter(v1, as, ps)
+	route.PostRouter(v1, as, ps, cac)
 	route.CommentRouter(v1, as, pcs)
 	route.LikeRouter(v1, as, ls)
 	route.FriendshipRouter(v1, as, frs)

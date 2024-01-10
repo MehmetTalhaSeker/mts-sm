@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/MehmetTalhaSeker/mts-sm/internal/dto"
+	"github.com/MehmetTalhaSeker/mts-sm/internal/utils/errorutils"
 	utils "github.com/MehmetTalhaSeker/mts-sm/internal/utils/fiberutils"
 	"github.com/MehmetTalhaSeker/mts-sm/service"
 )
@@ -13,6 +14,7 @@ import (
 func AuthRouter(app fiber.Router, service service.AuthService) {
 	app.Post("/auth/register", register(service))
 	app.Post("/auth/login", login(service))
+	app.Delete("/auth/logout", logout(service))
 }
 
 func register(service service.AuthService) fiber.Handler {
@@ -48,5 +50,20 @@ func login(service service.AuthService) fiber.Handler {
 		}
 
 		return c.Status(http.StatusOK).JSON(&authResponse)
+	}
+}
+
+func logout(service service.AuthService) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		ah := c.Get("Authorization")
+		if ah == "" {
+			return errorutils.ErrUnauthorized
+		}
+
+		if err := service.Logout(ah); err != nil {
+			return err
+		}
+
+		return c.Status(http.StatusOK).JSON("OK")
 	}
 }

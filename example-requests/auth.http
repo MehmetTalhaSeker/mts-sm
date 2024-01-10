@@ -19,3 +19,8 @@ Content-Type: application/json
   "password": "12341234",
   "username": "kamil"
 }
+
+### Logout User
+DELETE {{host}}/auth/logout
+Content-Type: application/json
+Authorization: Bearer {{token}}

@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/patrickmn/go-cache"
 
 	"github.com/MehmetTalhaSeker/mts-sm/internal/utils/errorutils"
 	"github.com/MehmetTalhaSeker/mts-sm/internal/utils/validatorutils"
@@ -41,4 +42,25 @@ func ExtractUserID(ctx *fiber.Ctx) (uint, error) {
 	}
 
 	return uint(userID), nil
+}
+
+func ShortenerRedirect(cac *cache.Cache) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		key := c.Params("key")
+		if key == "" {
+			return errorutils.ErrInvalidRequest
+		}
+
+		v, b := cac.Get(key)
+		if !b {
+			return errorutils.ErrInvalidRequest
+		}
+
+		url, ok := v.(string)
+		if !ok {
+			return errorutils.ErrInvalidRequest
+		}
+
+		return c.Redirect(url)
+	}
 }

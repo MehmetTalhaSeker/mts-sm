@@ -13,8 +13,8 @@ type TokenPayload struct {
 	Username string
 }
 
-func Generate(payload *TokenPayload) string {
-	v, err := time.ParseDuration("10h") // TODO
+func Generate(payload *TokenPayload, exp, key string) string {
+	v, err := time.ParseDuration(exp)
 	if err != nil {
 		panic("Invalid time duration. Should be time.ParseDuration string")
 	}
@@ -25,7 +25,7 @@ func Generate(payload *TokenPayload) string {
 		"id":       payload.ID,
 	})
 
-	token, err := t.SignedString([]byte("bla bla")) // TODO
+	token, err := t.SignedString([]byte(key))
 	if err != nil {
 		panic(err)
 	}
@@ -33,18 +33,18 @@ func Generate(payload *TokenPayload) string {
 	return token
 }
 
-func parse(token string) (*jwt.Token, error) {
+func parse(token, securityKey string) (*jwt.Token, error) {
 	return jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
 		}
 
-		return []byte("bla bla"), nil // TODO
+		return []byte(securityKey), nil
 	})
 }
 
-func Verify(token string) (*TokenPayload, error) {
-	parsed, err := parse(token)
+func Verify(token, securityKey string) (*TokenPayload, error) {
+	parsed, err := parse(token, securityKey)
 	if err != nil {
 		return nil, err
 	}

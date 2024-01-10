@@ -62,7 +62,3 @@ func (s *userService) Update(ud *dto.UserUpdateRequest) error {
 
 	return nil
 }
-
-func (s *userService) AddFriend() error {
-	return nil
-}

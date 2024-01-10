@@ -12,6 +12,7 @@ type PostRepository interface {
 	Create(*model.Post) error
 	ReadBy(field string, value string) (*model.Post, error)
 	Read(id uint) (*model.Post, error)
+	Reads() ([]model.Post, error)
 	Update(*model.Post) (*model.Post, error)
 	Delete(id uint) error
 }
@@ -47,6 +48,15 @@ func (r *postRepository) ReadBy(field string, value string) (*model.Post, error)
 	}
 
 	return &u, nil
+}
+
+func (r *postRepository) Reads() ([]model.Post, error) {
+	var ps []model.Post
+	if err := r.db.Find(&ps).Error; err != nil {
+		return nil, err
+	}
+
+	return ps, nil
 }
 
 func (r *postRepository) Update(us *model.Post) (*model.Post, error) {
